@@ -1,0 +1,17 @@
+{
+   "name": "request_header_parser_microservice",
+   "version": "1.0.0",
+   "dependencies": {
+      "express": "^4.16.2"
+   },
+   "engines": {
+      "node": "6.11.1"
+   },
+   "description": "",
+   "main": "server.js",
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+   },
+   "author": "",
+   "license": "GPL-3.0"
+}

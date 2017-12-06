@@ -1,27 +1,26 @@
-const express = require('express');
-const mongodb = require('mongodb');
-const path = require('path');
+"use strict";
+const http = require('http');
+const port = process.env.PORT || 3000;
 
-const app = express();
-
-app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname+'/public/index.html'));
-});
-app.get('/:parameter', function(req, res){
-    // avoid favicon request: https://stackoverflow.com/questions/17952436/node-js-double-console-log-output
-    if(req.url === '/favicon.ico')
-    {
-	console.log('favicon requested');
+const server = http.createServer((req, res) => {
+    //Add error listener
+    req.on('error', (err) => {
+	console.error(err);
+	res.statusCode = 400;
+	res.end();
+    });
+    
+    if (req.method === 'GET') {
+	res.statusCode = 200;
+	res.setHeader('Content-Type', 'text/plain');
+	res.end('Hello world');
     } else {
-
-	res.json(
-	    {
-		"ipaddress": null,
-		"language": null,
-		"sofware": null
-	    }
-	);
+	res.statusCode = 404;
+	res.end(`Cannot ${req.method} ${req.url}`);
     }
+
 });
 
-app.listen(process.env.PORT || 3000);
+server.listen(port, () => {
+    console.log(`Server running at port ${port}`);
+});

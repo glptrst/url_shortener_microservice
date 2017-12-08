@@ -1,5 +1,6 @@
 "use strict";
 const http = require('http');
+const fs = require('fs');
 const port = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
@@ -11,9 +12,14 @@ const server = http.createServer((req, res) => {
     });
     
     if (req.method === 'GET') {
-	res.statusCode = 200;
-	res.setHeader('Content-Type', 'text/plain');
-	res.end('Hello world');
+	if (req.url === '/') {
+	    res.statusCode = 200;
+	    fs.readFile("./public/index.html", (err, fileContent) => {
+		res.end(fileContent);
+	    });
+	} else {
+	    // check if it's a 
+	}
     } else {
 	res.statusCode = 404;
 	res.end(`Cannot ${req.method} ${req.url}`);

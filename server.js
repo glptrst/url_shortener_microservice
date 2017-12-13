@@ -18,7 +18,14 @@ const server = http.createServer((req, res) => {
 		res.end(fileContent);
 	    });
 	} else {
-	    // check if it's a 
+	    let splittedUrl = req.url.split('/');
+	    if (splittedUrl[1] === 'new') {
+		console.log('requesting new short link');
+		// TODO check whether url follows the valid http://www.example.com format
+	    } else {
+		res.statusCode = 404;
+		res.end(`Cannot ${req.method} ${req.url}`);
+	    }
 	}
     } else {
 	res.statusCode = 404;

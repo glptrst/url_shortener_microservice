@@ -20,7 +20,8 @@ const server = http.createServer((req, res) => {
 	} else {
 	    let splittedUrl = req.url.split('/');
 	    if (splittedUrl[1] === 'new') {
-		console.log('requesting new short link');
+		let url = req.url.slice(req.url.indexOf('new/')+4, req.url.length);
+		console.log(`requesting new short link for: ${url}`);
 		// TODO check whether url follows the valid http://www.example.com format
 	    } else {
 		res.statusCode = 404;
@@ -31,7 +32,6 @@ const server = http.createServer((req, res) => {
 	res.statusCode = 404;
 	res.end(`Cannot ${req.method} ${req.url}`);
     }
-
 });
 
 server.listen(port, () => {

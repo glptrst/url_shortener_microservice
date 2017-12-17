@@ -20,9 +20,16 @@ const server = http.createServer((req, res) => {
 	} else {
 	    let splittedUrl = req.url.split('/');
 	    if (splittedUrl[1] === 'new') {
-		let url = req.url.slice(req.url.indexOf('new/')+4, req.url.length);
-		console.log(`requesting new short link for: ${url}`);
-		// TODO check whether url follows the valid http://www.example.com format
+		let parameter = req.url.slice(req.url.indexOf('new/')+4, req.url.length);
+		console.log(`requesting new short link for: ${parameter}`);
+		// Check whether parameter follows the valid http://www.example.com format
+		// The first eleven/twelve chars should be : "http://www." or "https://www"
+		if (parameter.slice(0, 12) === 'https://www.' || parameter.slice(0, 11) === 'http://www.') {
+		    //TODO
+		} else {
+		    res.statusCode = 404;
+		    res.end(`Wrong parameter`);
+		}
 	    } else {
 		res.statusCode = 404;
 		res.end(`Cannot ${req.method} ${req.url}`);

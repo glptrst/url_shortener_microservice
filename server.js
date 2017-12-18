@@ -25,7 +25,15 @@ const server = http.createServer((req, res) => {
 		// Check whether parameter follows the valid http://www.example.com format
 		// The first eleven/twelve chars should be : "http://www." or "https://www"
 		if (parameter.slice(0, 12) === 'https://www.' || parameter.slice(0, 11) === 'http://www.') {
-		    //TODO
+		    let secondPartParameter = parameter[4] === 's' ? parameter.slice(12,parameter.length) : parameter.slice(11, parameter.lenght);
+		    // Check second part of parameter
+		    // There should be at laest one '.'
+		    if (secondPartParameter.split('.').length >= 2) {
+			
+		    } else {
+			res.statusCode = 404;
+			res.end(`Wrong parameter`);
+		    }
 		} else {
 		    res.statusCode = 404;
 		    res.end(`Wrong parameter`);

@@ -1,6 +1,8 @@
 "use strict";
 const http = require('http');
 const fs = require('fs');
+const MongoClient = require('mongodb').MongloClient;
+const assert = require('assert');
 const port = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
@@ -29,16 +31,33 @@ const server = http.createServer((req, res) => {
 		    // Check second part of parameter
 		    // There should be at laest one '.'
 		    if (secondPartParameter.split('.').length >= 2) {
+			// everything should be alright
+
+			// create an object with the parameter and a short url for it
+
+			// connect to the database
+
+			// insert document in the database
 			
+			// serve a page showing the document
+						
 		    } else {
 			res.statusCode = 404;
 			res.end(`Wrong parameter`);
+			console.log(`Wrong parameter`);
 		    }
 		} else {
 		    res.statusCode = 404;
 		    res.end(`Wrong parameter`);
+		    console.log(`Wrong parameter`);
 		}
 	    } else {
+		//check if it has been passed a short url that is present in the database
+
+		// if it is the case, then redirect to the right page
+
+		// otherwise end the response with a 404
+
 		res.statusCode = 404;
 		res.end(`Cannot ${req.method} ${req.url}`);
 	    }

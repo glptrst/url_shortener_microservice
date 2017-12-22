@@ -1,8 +1,9 @@
 "use strict";
 const http = require('http');
 const fs = require('fs');
-const MongoClient = require('mongodb').MongloClient;
+const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
+const dbName = 'short_urls_db';
 const port = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
@@ -33,10 +34,28 @@ const server = http.createServer((req, res) => {
 		    if (secondPartParameter.split('.').length >= 2) {
 			// everything should be alright
 
+			// create a short url that is not already present in the database
+			let shortUrl = '666';
+		
+
+			// Use connect method to connect to the server
+			MongoClient.connect(process.env.DBURI, function(err, client) {
+			    assert.equal(null, err);
+			    console.log("Connected successfully to server");
+
+			    const db = client.db(dbName);
+
+			    client.close();
+			});
+
+
 			// create an object with the parameter and a short url for it
-
-			// connect to the database
-
+			let result = {
+			    "orginal_url": parameter,
+			    "short_url": "TODO"
+			};
+			console.log(result);
+			
 			// insert document in the database
 			
 			// serve a page showing the document

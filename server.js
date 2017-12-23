@@ -3,7 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
-const dbName = 'short_urls_db';
+const dbName = 'url_shortener_microservice_db';
 const port = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
@@ -34,20 +34,7 @@ const server = http.createServer((req, res) => {
 		    if (secondPartParameter.split('.').length >= 2) {
 			// everything should be alright
 
-			// create a short url that is not already present in the database
-			let shortUrl = 'https://lit-ravine-89856.herokuapp.com/' + (Math.floor(Math.random() * (999 - 0 + 1)) + 0);
-			console.log(shortUrl);
-
-			// Use connect method to connect to the server
-			MongoClient.connect(process.env.DBURI, function(err, client) {
-			    assert.equal(null, err);
-			    console.log("Connected successfully to server");
-
-			    const db = client.db(dbName);
-
-			    client.close();
-			});
-
+			let shortUrl = createDoc();
 
 			// create an object with the parameter and a short url for it
 			let result = {
@@ -90,3 +77,34 @@ const server = http.createServer((req, res) => {
 server.listen(port, () => {
     console.log(`Server running at port ${port}`);
 });
+
+// Create a new doc with a short url. Return the short url value created.
+function createDoc() {
+    // create a short url that is not already present in the database
+    let shortUrl = 'https://lit-ravine-89856.herokuapp.com/' + (Math.floor(Math.random() * (999 - 0 + 1)) + 0);
+
+    MongoClient.connect(process.env.DBURI, function(err, client) {
+	assert.equal(null, err);
+	console.log("Connected successfully to server");
+
+	const db = client.db(dbName);
+
+	db.collection('urls').find({'short_url': shortUrl}).toArray(function(err, docs) {
+	    assert.equal(err, null);
+	    
+	    
+	    if (docs[0] === undefined) { //if this is true there is no doc has been found with the short url generated
+		// then we can insert the doc
+		console.log('we are inserting a new doc (fake)');
+		// TODO: insert new doc
+		client.close();
+	    } else {
+		// try again with another random url
+		console.log('The short url created already exists. Trying with another one');
+		createDoc();
+	    }
+	});
+    });
+
+    return shortUrl;
+}

@@ -35,8 +35,8 @@ const server = http.createServer((req, res) => {
 			// everything should be alright
 
 			// create a short url that is not already present in the database
-			let shortUrl = '666';
-		
+			let shortUrl = 'https://lit-ravine-89856.herokuapp.com/' + (Math.floor(Math.random() * (999 - 0 + 1)) + 0);
+			console.log(shortUrl);
 
 			// Use connect method to connect to the server
 			MongoClient.connect(process.env.DBURI, function(err, client) {
@@ -52,7 +52,7 @@ const server = http.createServer((req, res) => {
 			// create an object with the parameter and a short url for it
 			let result = {
 			    "orginal_url": parameter,
-			    "short_url": "TODO"
+			    "short_url": shortUrl
 			};
 			console.log(result);
 			

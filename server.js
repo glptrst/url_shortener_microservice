@@ -34,16 +34,9 @@ const server = http.createServer((req, res) => {
 		    if (secondPartParameter.split('.').length >= 2) {
 			// everything should be alright
 
-			let shortUrl = createDoc();
 
-			// create an object with the parameter and a short url for it
-			let result = {
-			    "orginal_url": parameter,
-			    "short_url": shortUrl
-			};
-			console.log(result);
+			createDoc(parameter);
 			
-			// insert document in the database
 			
 			// serve a page showing the document
 						
@@ -78,9 +71,9 @@ server.listen(port, () => {
     console.log(`Server running at port ${port}`);
 });
 
-// Create a new doc with a short url. Return the short url value created.
-function createDoc() {
-    // create a short url that is not already present in the database
+// Create a new doc with a short url.
+function createDoc(originalUrl) {
+    // create random new short url
     let shortUrl = 'https://lit-ravine-89856.herokuapp.com/' + (Math.floor(Math.random() * (999 - 0 + 1)) + 0);
 
     MongoClient.connect(process.env.DBURI, function(err, client) {
@@ -91,12 +84,20 @@ function createDoc() {
 
 	db.collection('urls').find({'short_url': shortUrl}).toArray(function(err, docs) {
 	    assert.equal(err, null);
-	    
-	    
-	    if (docs[0] === undefined) { //if this is true there is no doc has been found with the short url generated
+	    	    
+	    if (docs[0] === undefined) { //if this is true there is no doc has been found with the short url generated (maybe there is a better way to check this)
 		// then we can insert the doc
-		console.log('we are inserting a new doc (fake)');
-		// TODO: insert new doc
+		console.log('we are inserting a new doc');
+
+		var result = {
+		    "orginal_url": originalUrl,
+		    "short_url": shortUrl
+		};
+
+		db.collection('urls').insertOne(result, function(err, r){
+		    assert.equal(null, err);
+		});
+		
 		client.close();
 	    } else {
 		// try again with another random url
@@ -105,6 +106,4 @@ function createDoc() {
 	    }
 	});
     });
-
-    return shortUrl;
 }

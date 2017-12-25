@@ -33,13 +33,9 @@ const server = http.createServer((req, res) => {
 		    // There should be at laest one '.'
 		    if (secondPartParameter.split('.').length >= 2) {
 			// everything should be alright
-
-
+			//create  and insert doc
 			createDoc(parameter);
-			
-			
-			// serve a page showing the document
-						
+			// get from db doc
 		    } else {
 			res.statusCode = 404;
 			res.end(`Wrong parameter`);
@@ -90,7 +86,7 @@ function createDoc(originalUrl) {
 		console.log('we are inserting a new doc');
 
 		var result = {
-		    "orginal_url": originalUrl,
+		    "original_url": originalUrl,
 		    "short_url": shortUrl
 		};
 
@@ -99,11 +95,29 @@ function createDoc(originalUrl) {
 		});
 		
 		client.close();
+
+		getDoc(originalUrl);
 	    } else {
 		// try again with another random url
 		console.log('The short url created already exists. Trying with another one');
 		createDoc();
 	    }
+	});
+    });
+}
+
+function getDoc(parameter){
+    MongoClient.connect(process.env.DBURI, function(err, client) {
+	assert.equal(null, err);
+	console.log("Connected successfully to server");
+	const db = client.db(dbName);
+	var arr = db.collection('urls').find({"original_url": parameter}).toArray(function(err, docs) {
+	    assert.equal(err, null);
+	    console.log('parameter:' + parameter);
+	    console.log("that's the doc we inserted");
+	    console.log(docs);
+	    // serve a page showing the document
+	    client.close();
 	});
     });
 }

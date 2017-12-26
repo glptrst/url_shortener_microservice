@@ -54,10 +54,23 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 					// this way I don't have to implement a problematic loop
 
 					//get number of docs in the collection
-					var numberOfDocs = collection.find({}).count(function(err, numberOfDocs){
+					collection.find({}).count(function(err, numberOfDocs){
 					    if (numberOfDocs < 1000) {
 						console.log('There is enough space in the db. We can create the doc.');
 						
+						var doc = {
+						    "original_url": parameter,
+						    "short_url": 'https://lit-ravine-89856.herokuapp.com/' + String(numberOfDocs + 1 )
+						};
+						collection.insertOne(doc, function (err, result) {
+						    if (err) {
+							console.log(err);
+						    }else{
+							console.log('New Doc inserted!');
+							console.log(result);
+						    }
+						});
+
 					    } else {
 						console.log("Database full!");
 					    }

@@ -55,7 +55,7 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 
 					//get number of docs in the collection
 					collection.find({}).count(function(err, numberOfDocs){
-					    if (numberOfDocs < 1000) {
+					    if (numberOfDocs >= 3) {
 						console.log('There is enough space in the db. We can create the doc.');
 						
 						var doc = {

@@ -36,23 +36,13 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 			if (secondPartParameter.split('.').length >= 2) {
 			    // The conditions have been passed. Then it should be all right.
 			    console.log({"original_url": parameter});
+			    // check whether the parameter-url passed is already present in the database
 			    collection.find({"original_url": parameter}).toArray(function (err, docs) {
 				if (err){
 				    console.log(err);
 				} else {
 				    if (docs[0] === undefined) {
 					console.log('No doc for the link passed has been found. We can create a short url.');
-					
-					//instead of using a random number generator which apparentely generates also other problems
-					//I can use the following different strategy:
-					// I define a maximum entry of docs in the collection, lets say 1000
-					// I create short urls starting from 1
-					// I keep a counter in the database
-					// So when I have to create a new short url, I can check the counter, and create the
-					// short url with the next number
-					// If the number is the maximum I generate warning/error/whatever
-					// this way I don't have to implement a problematic loop
-
 					//get number of docs in the collection
 					collection.find({}).count(function(err, numberOfDocs){
 					    // Limit database collection to a maximum of 1000 documents
@@ -65,9 +55,12 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 						collection.insertOne(doc, function (err, result) {
 						    if (err) {
 							console.log(err);
-						    }else{
+						    }else {
 							console.log('New Doc inserted!');
-							console.log(result.ops);
+							// Serve relevant information 
+							res.statusCode = 200;
+							res.setHeader('Content-Type', 'application/json');
+							res.end(JSON.stringify({"original_url": doc["original_url"], "short_url": doc["short_url"]}));
 						    }
 						});
 					    } else {

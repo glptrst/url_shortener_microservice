@@ -55,9 +55,9 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 
 					//get number of docs in the collection
 					collection.find({}).count(function(err, numberOfDocs){
-					    if (numberOfDocs >= 3) {
+					    // Limit database collection to a maximum of 1000 documents
+					    if (numberOfDocs < 999) {
 						console.log('There is enough space in the db. We can create the doc.');
-						
 						var doc = {
 						    "original_url": parameter,
 						    "short_url": 'https://lit-ravine-89856.herokuapp.com/' + String(numberOfDocs + 1 )
@@ -67,12 +67,11 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 							console.log(err);
 						    }else{
 							console.log('New Doc inserted!');
-							console.log(result);
+							console.log(result.ops);
 						    }
 						});
-
 					    } else {
-						console.log("Database full!");
+						console.log("Database full! Number of docs: " + String(numberOfDocs));
 					    }
 					});
 					

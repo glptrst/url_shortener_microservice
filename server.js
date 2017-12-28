@@ -72,7 +72,6 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 				    	console.log('There is already a doc for the link passed:');
 					console.log(docs);
 					// Just serve that relevant info
-					// TODO
 					res.statusCode = 200;
 					res.setHeader('Content-Type', 'application/json');
 					res.end(JSON.stringify({"original_url": docs[0]["original_url"], "short_url": docs[0]["short_url"]}));

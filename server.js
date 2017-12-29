@@ -13,13 +13,17 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 	req.on('error', (err) => {
 	    console.error(err);
 	    res.statusCode = 400;
-	    res.end();
+	    res.end('Error');
 	});
 	if (req.method === 'GET') {
 	    if (req.url === '/') {
 		res.statusCode = 200;
 		fs.readFile("./public/index.html", (err, fileContent) => {
-		    res.end(fileContent);
+		    if (err) {
+			console.log(err);
+		    } else {
+			res.end(fileContent);
+		    }
 		});
 	    } else {
 		let splittedUrl = req.url.split('/');
@@ -40,6 +44,8 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 			    collection.find({"original_url": parameter}).toArray(function (err, docs) {
 				if (err){
 				    console.log(err);
+				    res.statusCode = 400;
+				    res.end();
 				} else {
 				    if (docs[0] === undefined) {
 					console.log('No doc for the link passed has been found. We can create a short url.');
@@ -55,7 +61,9 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 						collection.insertOne(doc, function (err, result) {
 						    if (err) {
 							console.log(err);
-						    }else {
+							res.statusCode = 400;
+							res.end();
+						    } else {
 							console.log('New Doc inserted!');
 							// Serve relevant information 
 							res.statusCode = 200;
@@ -90,14 +98,25 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 			console.log(`Wrong parameter`);
 		    }
 		} else {
-		    //check if it has been passed a short url that is present in the database
-
-		    // if it is the case, then redirect to the right page
-
-		    // otherwise end the response with a 404
-
-		    res.statusCode = 404;
-		    res.end(`Cannot ${req.method} ${req.url}`);
+		    // A short url has been used
+		    if (req.url === '/favicon.ico') {
+			//do nothing
+		    } else {
+			var shortUrl = 'https://lit-ravine-89856.herokuapp.com/' + req.url.slice(1, req.url.length);
+			console.log(shortUrl);
+			//Find original url in the db
+			collection.find({"short_url": shortUrl}).toArray(function (err, docs) {
+		    	    if (err) {
+		    		console.log(err);
+		    		res.statusCode = 400;
+		    		res.end();
+		    	    }else {
+				// redirect to original url
+				res.writeHead(302,  {Location: docs[0]["original_url"]});
+				res.end();
+		    	    }
+			});
+		    }
 		}
 	    }
 	} else {

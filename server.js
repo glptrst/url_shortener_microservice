@@ -21,7 +21,10 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 		fs.readFile("./public/index.html", (err, fileContent) => {
 		    if (err) {
 			console.log(err);
+			res.statusCode = 400;
+			res.end('Error');
 		    } else {
+			res.writeHead(200, { 'Content-Type': 'text/html' });
 			res.end(fileContent);
 		    }
 		});

@@ -116,8 +116,13 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 		    		res.end();
 		    	    }else {
 				// redirect to original url
-				res.writeHead(302,  {Location: docs[0]["original_url"]});
-				res.end();
+				if (docs[0] === undefined) {
+				    res.statusCode = 404;
+				    res.end('This short url does not exist');
+				} else {
+				    res.writeHead(302,  {Location: docs[0]["original_url"]});
+				    res.end();
+				}
 		    	    }
 			});
 		    }

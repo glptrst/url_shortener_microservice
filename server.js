@@ -76,9 +76,10 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 						});
 					    } else {
 						console.log("Database full! Number of docs: " + String(numberOfDocs));
+						res.statusCode = 400;
+						res.end("Database full! Number of docs: " + String(numberOfDocs));
 					    }
 					});
-					
 				    } else {
 				    	console.log('There is already a doc for the link passed:');
 					console.log(docs);

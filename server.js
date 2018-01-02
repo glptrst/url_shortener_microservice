@@ -112,7 +112,7 @@ mongodb.MongoClient.connect(process.env.DBURI, function(err, db) {
 			collection.find({"short_url": shortUrl}).toArray(function (err, docs) {
 		    	    if (err) {
 		    		console.log(err);
-		    		res.statusCode = 400;
+		    		res.statusCode = 404;
 		    		res.end();
 		    	    }else {
 				// redirect to original url
